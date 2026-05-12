@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yemek Sipariş | Mor & Yeşil Lezzet</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container nav">
+            <div class="logo" onclick="showSection('restaurants-section')" style="cursor:pointer">
+                🥗 <span>YemekSipariş</span>
+            </div>
+            <div class="search-container" id="search-bar" style="display: none;">
+                <input type="text" id="search-input" placeholder="Restoran veya yemek ara..." onkeyup="handleSearch(event)">
+                <button onclick="performSearch()">🔍</button>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <!-- Dinamik olarak dolacak -->
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Giriş Ekranı -->
+        <section id="login-section" class="auth-container">
+            <h2>Giriş Yap</h2>
+            <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
+                <div class="form-group">
+                    <label>E-posta</label>
+                    <input type="email" name="email" required placeholder="ornek@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%">Giriş Yap</button>
+            </form>
+        </section>
+
+        <!-- Kayıt Ekranı -->
+        <section id="register-section" class="auth-container">
+            <h2>Kayıt Ol</h2>
+            <form onsubmit="event.preventDefault(); register(this.first_name.value, this.last_name.value, this.email.value, this.password.value, this.role.value)">
+                <div class="form-group">
+                    <label>Ad</label>
+                    <input type="text" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Soyad</label>
+                    <input type="text" name="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label>E-posta</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Hesap Türü</label>
+                    <select name="role" required>
+                        <option value="customer">Müşteri</option>
+                        <option value="restaurant_owner">Restoran Sahibi</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-secondary" style="width:100%">Hesap Oluştur</button>
+            </form>
+        </section>
+
+        <!-- Restoran Listesi -->
+        <section id="restaurants-section">
+            <h1 style="margin-top:2rem">Restoranları Keşfet</h1>
+            <div class="grid" id="restaurants-grid">
+                <!-- Restoran kartları buraya gelecek -->
+            </div>
+        </section>
+
+        <!-- Menü Ekranı -->
+        <section id="menu-section">
+            <div style="display:flex; align-items:center; gap:20px; margin-top:2rem">
+                <button class="btn" onclick="showSection('restaurants-section')">⬅️ Geri</button>
+                <h1 id="menu-title">Restoran Menüsü</h1>
+            </div>
+            <div class="grid" id="menu-grid">
+                <!-- Ürün kartları buraya gelecek -->
+            </div>
+            
+            <div id="reviews-section" style="margin-top:4rem">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <h2>Müşteri Yorumları</h2>
+                    <button class="btn btn-secondary" onclick="showReviewModal()">Yorum Yap</button>
+                </div>
+                <div id="reviews-list" style="margin-top:1.5rem">
+                    <!-- Yorumlar buraya gelecek -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Sepet Ekranı -->
+        <section id="cart-section">
+            <h1 style="margin-top:2rem">Sepetim</h1>
+            <div class="card" style="margin-top:1rem; padding:2rem">
+                <div id="cart-items">
+                    <!-- Sepet kalemleri -->
+                </div>
+                <div style="margin-top:2rem; border-top:2px solid #F7FAFC; padding-top:1rem; display:flex; justify-content:space-between; align-items:center">
+                    <div>
+                        <span style="font-size:1.2rem; font-weight:600">Toplam: </span>
+                        <span id="cart-total" class="price">0 TL</span>
+                    </div>
+                    <button class="btn btn-secondary" onclick="checkout()">Siparişi Tamamla</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Siparişlerim Ekranı -->
+        <section id="orders-section">
+            <h1 style="margin-top:2rem">Geçmiş Siparişlerim</h1>
+            <div id="orders-list" style="margin-top:1rem">
+                <!-- Sipariş kartları -->
+            </div>
+        </section>
+
+        <!-- Yönetim Ekranı -->
+        <section id="management-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem">
+                <h1>Restoran Yönetimi</h1>
+                <button class="btn btn-primary" onclick="showAddRestaurantModal()">+ Yeni Restoran Ekle</button>
+            </div>
+            <div class="grid" id="management-grid">
+                <!-- Yönetilen restoranlar -->
+            </div>
+        </section>
+
+        <!-- Modal: Restoran Ekle/Düzenle -->
+        <div id="restaurant-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-title">Restoran Ekle</h2>
+                <form id="restaurant-form" onsubmit="event.preventDefault(); saveRestaurant()">
+                    <input type="hidden" name="id">
+                    <div class="form-group">
+                        <label>Restoran Adı</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Adres</label>
+                        <input type="text" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Açıklama</label>
+                        <input type="text" name="description">
+                    </div>
+                    <div class="form-group">
+                        <label>Logo URL (İsteğe bağlı)</label>
+                        <input type="url" name="logo_url">
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end">
+                        <button type="button" class="btn" onclick="closeModal('restaurant-modal')">İptal</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Ürün Ekle/Düzenle -->
+        <div id="product-modal" class="modal">
+            <div class="modal-content">
+                <h2>Ürün Ekle</h2>
+                <form id="product-form" onsubmit="event.preventDefault(); saveProduct()">
+                    <input type="hidden" name="restaurant_id">
+                    <div class="form-group">
+                        <label>Ürün Adı</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fiyat (TL)</label>
+                        <input type="number" name="price" required step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Açıklama</label>
+                        <input type="text" name="description" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stok</label>
+                        <input type="number" name="stock" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Resim URL</label>
+                        <input type="url" name="image_url">
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end">
+                        <button type="button" class="btn" onclick="closeModal('product-modal')">İptal</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Modal: Yorum Yap -->
+        <div id="review-modal" class="modal">
+            <div class="modal-content">
+                <h2>Yorum Yap & Puan Ver</h2>
+                <form id="review-form" onsubmit="event.preventDefault(); submitReview()">
+                    <input type="hidden" name="restaurant_id">
+                    <input type="hidden" name="product_id">
+                    <div class="form-group">
+                        <label>Puan (1-5)</label>
+                        <select name="rating" required>
+                            <option value="5">⭐⭐⭐⭐⭐ (5 - Mükemmel)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 - Çok İyi)</option>
+                            <option value="3">⭐⭐⭐ (3 - Orta)</option>
+                            <option value="2">⭐⭐ (2 - Kötü)</option>
+                            <option value="1">⭐ (1 - Berbat)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Yorumunuz</label>
+                        <textarea name="comment" required placeholder="Lezzet, servis ve hız hakkındaki düşünceleriniz..." style="width:100%; padding:12px; border:1px solid #E2E8F0; border-radius:8px; min-height:100px"></textarea>
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end">
+                        <button type="button" class="btn" onclick="closeModal('review-modal')">İptal</button>
+                        <button type="submit" class="btn btn-secondary">Yorumu Gönder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
